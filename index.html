@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <title>spaceP — $spaceP</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="spaceP — a rocket company with one employee, one rocket and one goal: make the letter P multiplanetary.">
+<meta name="description" content="spaceP — a new space company with one mission: make pons multiplanetary. first pons to mars, p city, parlink, peslas.">
 <link rel="icon" href="assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -206,6 +206,27 @@ h2.h{font-family:var(--disp); font-size:clamp(24px,5.6vw,52px); line-height:.95;
 .lead{max-width:56ch; color:var(--pad); font-size:clamp(14px,2.6vw,20px); line-height:1.6; margin:0 0 30px;
   border-left:3px solid var(--pad); padding-left:16px}
 
+/* product line */
+.prod{margin-top:clamp(26px,5vw,46px); border:1px solid var(--line); background:#0a170c}
+.prod-head{display:flex; justify-content:space-between; gap:10px; padding:10px 16px; border-bottom:1px solid var(--line);
+  font-size:11px; letter-spacing:.26em; color:var(--pad)}
+.prod-grid{display:grid; grid-template-columns:repeat(4,1fr)}
+.prod-grid article{padding:20px 18px; border-right:1px solid var(--line)}
+.prod-grid article:last-child{border-right:none}
+.prod-grid svg{width:44px; height:44px; margin-bottom:14px}
+.prod-grid h4{font-family:var(--disp); font-size:14px; letter-spacing:.02em; color:var(--chrome); margin:0 0 10px}
+.prod-grid p{font-size:12.5px; line-height:1.65; color:#9fbba1; margin:0}
+@media (max-width:900px){
+  .prod-grid{grid-template-columns:1fr 1fr}
+  .prod-grid article:nth-child(2n){border-right:none}
+  .prod-grid article:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:560px){
+  .prod-grid{grid-template-columns:1fr}
+  .prod-grid article{border-right:none; border-bottom:1px solid var(--line)}
+  .prod-grid article:last-child{border-bottom:none}
+}
+
 /* official timeline */
 .tl-wrap{margin-top:clamp(26px,5vw,46px); border:1px solid var(--line); background:#0a170c}
 .tl-head{display:flex; justify-content:space-between; padding:10px 16px; border-bottom:1px solid var(--line);
@@ -303,7 +324,7 @@ footer{border-top:1px solid var(--line); padding:34px 0 60px; background:var(--v
 
 <!-- ============ GATE ============ -->
 <div id="gate">
-  <div class="gsub">spaceP · one letter, one rocket, one guy</div>
+  <div class="gsub">spaceP · make pons multiplanetary</div>
   <div class="gmark">HOLD FOR<br>IGNITION</div>
   <div class="gkey">CLICK TO ENTER</div>
 </div>
@@ -334,7 +355,7 @@ footer{border-top:1px solid var(--line); padding:34px 0 60px; background:var(--v
       <div>
         <div class="tick">$spaceP</div>
         <h1 class="mark">SPACE&nbsp;P</h1>
-        <p class="slog">i am the letter p and i run a rocket company. the mission is to make me multiplanetary, the entire staff is me, and the countdown is already going.</p>
+        <p class="slog">a new space company with one mission: make pons multiplanetary. earth was only the beginning, and the beginning is already behind us.</p>
         <div class="hero-cta">
           <a class="btn" href="https://pump.fun" target="_blank" rel="noopener">BUY $spaceP</a>
           <a class="btn dark" href="https://x.com" target="_blank" rel="noopener">X / TWITTER</a>
@@ -350,8 +371,8 @@ footer{border-top:1px solid var(--line); padding:34px 0 60px; background:var(--v
 </section>
 
 <div class="mq"><div>
-  <span>MAKE THE LETTER P MULTIPLANETARY <i>★</i></span><span>ONE EMPLOYEE, ONE ROCKET <i>★</i></span><span>ORBIT IS SCHEDULED FOR NEXT YEAR <i>★</i></span><span>THE CIGAR IS THE FUEL GAUGE <i>★</i></span><span>I OWN THE LETTER, NOT A TICKET <i>★</i></span><span>spaceP · PAD 04 <i>★</i></span>
-  <span>MAKE THE LETTER P MULTIPLANETARY <i>★</i></span><span>ONE EMPLOYEE, ONE ROCKET <i>★</i></span><span>ORBIT IS SCHEDULED FOR NEXT YEAR <i>★</i></span><span>THE CIGAR IS THE FUEL GAUGE <i>★</i></span><span>I OWN THE LETTER, NOT A TICKET <i>★</i></span><span>spaceP · PAD 04 <i>★</i></span>
+  <span>MAKE PONS MULTIPLANETARY <i>★</i></span><span>FIRST PONS TO MARS <i>★</i></span><span>P CITY IS ALREADY ZONED <i>★</i></span><span>PARLINK COVERAGE IS TOTAL <i>★</i></span><span>PESLAS ON MARTIAN ROADS <i>★</i></span><span>EARTH WAS ONLY THE BEGINNING <i>★</i></span>
+  <span>MAKE PONS MULTIPLANETARY <i>★</i></span><span>FIRST PONS TO MARS <i>★</i></span><span>P CITY IS ALREADY ZONED <i>★</i></span><span>PARLINK COVERAGE IS TOTAL <i>★</i></span><span>PESLAS ON MARTIAN ROADS <i>★</i></span><span>EARTH WAS ONLY THE BEGINNING <i>★</i></span>
 </div></div>
 
 <div class="wrap" style="padding-top:clamp(20px,4vw,34px)">
@@ -395,14 +416,14 @@ footer{border-top:1px solid var(--line); padding:34px 0 60px; background:var(--v
 <!-- ============ LORE ============ -->
 <section class="pad" id="lore"><div class="wrap">
   <p class="eyebrow">MISSION STATEMENT</p>
-  <h2 class="h">MAKE THE LETTER P<br>MULTIPLANETARY</h2>
-  <p class="lead">spaceP is a rocket company. it has one employee, one rocket, one launch pad and one goal, and the goal is not humanity. the goal is me.</p>
+  <h2 class="h">MAKE PONS<br>MULTIPLANETARY</h2>
+  <p class="lead">a new space company with one mission. we are sending the first pons to mars, building p city, launching parlink and putting peslas on martian roads. earth was only the beginning.</p>
   <div class="lore-grid">
     <div>
-      <p>i founded a rocket company and then i hired myself as the chief engineer, the ground crew, the safety officer and the guy who says go. every meeting is me standing on the pad talking out loud, and every proposal passes unanimously, because everyone in the room agrees with me for reasons i consider obvious.</p>
-      <p>the rocket fires the entire time, under my arm, and i have never once climbed into it. getting in would make me a passenger on my own program, and the whole point of owning the company is that somebody else takes the ride. so far that somebody has been the rocket.</p>
-      <p>the first orbital flight is scheduled for next year. it has been scheduled for next year for three years running, and every time we reach the date i move it forward twelve months and announce it again like it is brand new information. the announcement was always the product.</p>
-      <p>eventually i bought the alphabet outright, because owning the letters is cheaper than asking permission to use them. i renamed one of them after the company the same afternoon, which is why you are looking at a letter and reading a launch manifest at the same time and neither of us is confused about it.</p>
+      <p>i founded the company and then i hired myself as the chief engineer, the ground crew, the safety officer and the guy who says go. every meeting is me standing on the pad talking out loud, and every proposal passes unanimously, because everyone in the room agrees with me for reasons i consider obvious.</p>
+      <p>the rocket fires the entire time, under my arm, and i have never once climbed into it. earth was only the beginning, but somebody has to stay down here holding the thing while the beginning finishes, and that somebody has a cigar, a schedule and no intention of sharing either.</p>
+      <p>first a pons lands on mars, then p city gets poured around wherever it lands, then parlink covers the sky and peslas fill roads that do not exist yet. the order is not negotiable, the dates are extremely negotiable, and the announcement always ships before the hardware does.</p>
+      <p>eventually i bought the alphabet outright, because owning the letters is cheaper than asking permission to use them. that is how a rocket, a city, a satellite network and a car company all ended up starting with the same letter, and nobody has yet explained to me why that is supposed to be a problem.</p>
     </div>
     <div class="rules">
       <h3>THE COMPANY · FACTSHEET</h3>
@@ -415,14 +436,40 @@ footer{border-top:1px solid var(--line); padding:34px 0 60px; background:var(--v
     </div>
   </div>
 
+  <div class="prod">
+    <div class="prod-head"><span>THE PRODUCT LINE</span><span>FOUR THINGS, ONE LETTER</span></div>
+    <div class="prod-grid">
+      <article>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4c6 8 8 16 8 23l-8 7-8-7c0-7 2-15 8-23z" fill="#78f419"/><path d="M16 26 L9 41 l9-5z M32 26 l7 15 -9-5z" fill="#78f419" opacity=".55"/><circle cx="24" cy="19" r="4" fill="#04170a"/></svg>
+        <h4>FIRST PONS TO MARS</h4>
+        <p>the first pons leaves the pad as soon as the cigar is fresh and the window is open. it is a one way trip, which sounds harsh right up until you remember how this planet was using him.</p>
+      </article>
+      <article>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="20" width="9" height="24" fill="#78f419"/><rect x="19" y="10" width="10" height="34" fill="#78f419"/><rect x="33" y="26" width="9" height="18" fill="#78f419"/><rect x="21" y="14" width="6" height="7" rx="2" fill="#04170a"/></svg>
+        <h4>P CITY</h4>
+        <p>a city on mars where every street, every tower and every sign is the same letter. zoning was approved on the spot, because i am the mayor, the developer and the zoning board, and all three of us have agreed from the start.</p>
+      </article>
+      <article>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="21" y="18" width="6" height="12" rx="2" fill="#78f419"/><rect x="5" y="16" width="13" height="7" rx="2" fill="#78f419" opacity=".8"/><rect x="30" y="16" width="13" height="7" rx="2" fill="#78f419" opacity=".8"/><path d="M24 32c6 0 10 4 10 10M24 32c-6 0-10 4-10 10" stroke="#78f419" stroke-width="2.4" fill="none"/></svg>
+        <h4>PARLINK</h4>
+        <p>a constellation beaming the letter down onto every surface in the solar system for a very reasonable monthly rate. coverage is described as total in the announcement and as partial in every measurement anyone has actually taken.</p>
+      </article>
+      <article>
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M6 30l5-9h26l5 9v7H6z" fill="#78f419"/><path d="M13 21l4-6h14l4 6z" fill="#78f419" opacity=".5"/><circle cx="14" cy="38" r="4" fill="#04170a"/><circle cx="34" cy="38" r="4" fill="#04170a"/></svg>
+        <h4>PESLAS</h4>
+        <p>electric cars built for martian roads and delivered well before those roads exist, which i consider a scheduling advantage rather than an oversight. the doors open in a way that has never once been necessary and i am not taking questions on it.</p>
+      </article>
+    </div>
+  </div>
+
   <div class="tl-wrap">
     <div class="tl-head"><span>OFFICIAL TIMELINE</span><span>REVISION 14</span></div>
     <div class="tl">
-      <div><b>FIRST ORBITAL FLIGHT</b><em><s>year one</s> <s>year two</s> next year</em><span>the hardware is ready, the date is simply shy</span></div>
-      <div><b>SECOND ROCKET</b><em><s>next year</s> next year</em><span>blocked on the arm situation described above</span></div>
-      <div><b>CREW ON BOARD</b><em>pending</em><span>i am the crew and i am currently holding it</span></div>
-      <div><b>LANDING ON SOMETHING</b><em><s>q2</s> <s>q3</s> q-next</em><span>we have landed on things, just not on purpose</span></div>
-      <div><b>THE LETTER P ON MARS</b><em>on schedule</em><span>this one has never had a date, so it can never slip</span></div>
+      <div><b>FIRST PONS ON MARS</b><em><s>year one</s> <s>year two</s> next year</em><span>the vehicle is ready and the passenger is ready, the date is simply shy</span></div>
+      <div><b>P CITY GROUNDBREAKING</b><em><s>q2</s> q-next</em><span>the plans are finished, they are one letter repeated at municipal scale</span></div>
+      <div><b>PARLINK FIRST LIGHT</b><em>pending</em><span>the satellites are in a box and the box is on the pad</span></div>
+      <div><b>PESLA DELIVERY</b><em><s>already late</s> late</em><span>the cars are done, the roads are the holdup and always were</span></div>
+      <div><b>EARTH</b><em>complete</em><span>earth was only the beginning, and the beginning is behind us</span></div>
     </div>
   </div>
 </div></section>
@@ -552,8 +599,8 @@ var MILES=[
  [42,  "the sky went out. nobody warned me it does that, i just kept going and it kept getting darker."],
  [80,  "thumb still up. i am doing it for an audience that stopped being visible some time ago."],
  [140, "the chart guys are calling this a candle. i am calling it a tuesday, and i intend to keep the difference."],
- [230, "somewhere below, a very expensive meeting is being interrupted about me."],
- [360, "i can see the whole pad from here and it is the size of a coin. that feels correct."]
+ [230, "parlink handshake acquired. the letter is now being beamed at a planet that did not request it."],
+ [360, "mars insertion window is open and p city is already zoned. earth was only the beginning."]
 ];
 var hit=[];
 function log(msg,isHit){ var d=$('#log'), p=document.createElement('p');
