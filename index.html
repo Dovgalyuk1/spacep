@@ -1,0 +1,767 @@
+<meta charset="utf-8">
+<title>SPACE P — $SPACEP</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="space p. the letter that owns a rocket program.">
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<script>
+/* SETTINGS - everything is changed here, at the top, in ONE place */
+window.CONTRACT = "";  /* contract address. empty = "soon" */
+window.TWITTER  = "";  /* link to X. empty = plain x.com link */
+document.addEventListener('DOMContentLoaded', function(){
+  var CA=(window.CONTRACT||"").trim(), TW=(window.TWITTER||"").trim();
+  document.querySelectorAll('a[href]').forEach(function(a){
+    var h=a.getAttribute('href')||"";
+    if(h.indexOf('pump.fun')>-1){ if(CA) a.href='https://pump.fun/coin/'+CA; }
+    else if(h.indexOf('dexscreener')>-1){ if(CA) a.href='https://dexscreener.com/solana/'+CA; }
+    else if(h.indexOf('x.com')>-1||h.indexOf('twitter.com')>-1){ if(TW) a.href=TW; }
+  });
+  if(CA){
+    document.querySelectorAll('.ca b, .ca-val').forEach(function(b){ b.textContent=CA; });
+    document.querySelectorAll('.ca, .ca-row').forEach(function(el){
+      el.title=CA; el.style.cursor='pointer';
+      el.addEventListener('click', function(){ if(navigator.clipboard) navigator.clipboard.writeText(CA); });
+    });
+  }
+});
+</script>
+
+<style>
+:root{
+  --pad:#78f419;          /* launch pad green */
+  --pad-dk:#3fae08;
+  --void:#050c07;
+  --panel:#0b170e;
+  --panel-2:#112616;
+  --chrome:#eef3f4;
+  --chrome-dk:#93a2a7;
+  --ember:#ffb02b;
+  --flame:#ff6a12;
+  --cigar:#d09242;
+  --ink:#04170a;
+  --line:rgba(120,244,25,.28);
+  --disp:'Archivo Black',system-ui,sans-serif;
+  --mono:'Space Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--void); color:var(--chrome); font-family:var(--mono);
+  overflow-x:clip; -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+img{max-width:100%; display:block}
+
+/* ---------- films ---------- */
+.film{position:fixed; inset:0; pointer-events:none; z-index:90}
+.scanlines{background:repeating-linear-gradient(rgba(0,0,0,.28) 0 1px,transparent 1px 3px); mix-blend-mode:multiply; opacity:.6}
+.grain{background-image:radial-gradient(rgba(255,255,255,.5) .5px,transparent .6px); background-size:3px 3px; mix-blend-mode:overlay; opacity:.13}
+.vignette{background:radial-gradient(ellipse at 50% 42%, #0000 48%, rgba(0,0,0,.72) 100%)}
+
+/* ---------- gate ---------- */
+#gate{position:fixed; inset:0; z-index:200; background:
+  radial-gradient(ellipse at 50% 60%, #9dff4a 0%, var(--pad) 40%, #45ba0b 100%);
+  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:22px; cursor:pointer}
+#gate .gmark{font-family:var(--disp); font-size:clamp(48px,13vw,150px); line-height:.85; color:var(--ink);
+  letter-spacing:-.03em; text-align:center; text-shadow:0 6px 0 rgba(255,255,255,.5)}
+#gate .gsub{font-size:clamp(11px,2.4vw,15px); letter-spacing:.34em; color:#123c05; text-transform:uppercase}
+#gate .gkey{border:3px solid var(--ink); background:#fff; color:var(--ink); font-family:var(--disp);
+  padding:14px 26px; font-size:clamp(13px,2.6vw,18px); letter-spacing:.08em; box-shadow:0 6px 0 var(--ink);
+  animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:translateY(3px); box-shadow:0 3px 0 var(--ink)}}
+body.entered #gate{opacity:0; pointer-events:none; transition:opacity .5s}
+
+/* ---------- preloader ---------- */
+#boot{position:fixed; inset:0; z-index:190; background:var(--void); display:none; padding:clamp(18px,5vw,60px);
+  flex-direction:column; justify-content:center; font-size:clamp(11px,2.1vw,14px)}
+body.booting #boot{display:flex}
+#boot .bh{font-family:var(--disp); color:var(--pad); font-size:clamp(15px,3.4vw,26px); margin-bottom:16px; letter-spacing:-.01em}
+#boot ul{list-style:none; margin:0; padding:0; max-width:720px}
+#boot li{display:flex; justify-content:space-between; gap:14px; padding:5px 0; color:#5f7a63; border-bottom:1px dashed rgba(120,244,25,.18)}
+#boot li.ok{color:var(--pad)}
+#boot li b{font-weight:700}
+#boot .bar{margin-top:18px; height:12px; border:1px solid var(--line); max-width:720px}
+#boot .bar i{display:block; height:100%; width:0; background:var(--pad); transition:width .18s linear}
+#boot .skip{margin-top:20px; align-self:flex-start; background:none; border:1px solid var(--line); color:#9dffb0;
+  font-family:var(--mono); font-size:12px; letter-spacing:.2em; padding:9px 18px; cursor:pointer}
+#boot .skip:hover{background:var(--pad); color:var(--ink)}
+
+/* ---------- shell ---------- */
+#site{display:none}
+body.live #site{display:block; animation:fade .6s}
+@keyframes fade{from{opacity:0}}
+
+.wrap{max-width:1180px; margin:0 auto; padding:0 clamp(14px,4vw,28px)}
+
+/* top bar */
+.topbar{position:sticky; top:0; z-index:80; background:rgba(5,12,7,.92); border-bottom:1px solid var(--line);
+  backdrop-filter:blur(6px); font-size:11px; letter-spacing:.16em}
+.topbar .wrap{display:flex; align-items:center; gap:14px; height:42px; justify-content:space-between}
+.topbar .tl{display:flex; gap:16px; align-items:center; color:#7fe36a; overflow:hidden; white-space:nowrap}
+.rec{display:inline-flex; align-items:center; gap:6px; color:#ff5a4d}
+.rec i{width:8px;height:8px;background:#ff5a4d;border-radius:50%; animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:.15}}
+.clock{color:var(--pad)}
+
+/* hero */
+#hero{position:relative; overflow:hidden; background:
+  radial-gradient(ellipse 90% 70% at 50% 100%, #a6ff5c 0%, var(--pad) 38%, #3ea60a 100%);
+  padding:clamp(24px,5vw,56px) 0 0}
+#hero:before{content:""; position:absolute; inset:0;
+  background:repeating-linear-gradient(90deg,rgba(0,0,0,.06) 0 2px,transparent 2px 46px)}
+.hero-grid{position:relative; display:grid; grid-template-columns:1fr 1fr; gap:clamp(10px,3vw,40px); align-items:end}
+.mark{font-family:var(--disp); line-height:.78; letter-spacing:-.045em; margin:22px 0 10px;
+  font-size:clamp(56px,12.4vw,168px);
+  background:linear-gradient(#ffffff 30%,#dfe9ec 48%,#8ba0a7 62%,#ffffff 78%,#b9c8cd 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  -webkit-text-stroke:clamp(4px,1.1vw,7px) var(--ink); paint-order:stroke fill;
+  filter:drop-shadow(0 8px 0 #2c6a07) drop-shadow(0 15px 0 #1c4404) drop-shadow(0 24px 26px rgba(0,0,0,.45));
+}
+.tick{display:inline-block; font-family:var(--disp); background:var(--ink); color:var(--pad);
+  padding:6px 14px; font-size:clamp(14px,3vw,22px); letter-spacing:.04em; transform:rotate(-2deg); box-shadow:5px 5px 0 rgba(0,0,0,.35)}
+.slog{color:#0d2f04; font-size:clamp(13px,2.5vw,17px); line-height:1.55; margin:18px 0 0; max-width:30ch; font-weight:700}
+.hero-cta{display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 26px}
+.btn{display:inline-flex; align-items:center; gap:8px; font-family:var(--disp); font-size:13px; letter-spacing:.06em;
+  text-decoration:none; padding:12px 18px; border:3px solid var(--ink); background:#fff; color:var(--ink);
+  box-shadow:0 5px 0 var(--ink); transition:transform .08s, box-shadow .08s}
+.btn:active{transform:translateY(4px); box-shadow:0 1px 0 var(--ink)}
+.btn.dark{background:var(--ink); color:var(--pad); box-shadow:0 5px 0 #06340a}
+.btn svg{width:15px;height:15px}
+.hero-char{position:relative; justify-self:center; align-self:end; width:min(100%,560px)}
+.hero-char img{width:100%; filter:drop-shadow(0 26px 30px rgba(0,0,0,.35)); animation:hover 5.2s ease-in-out infinite}
+@keyframes hover{50%{transform:translateY(-14px)}}
+.smoke{position:absolute; left:50%; bottom:-6%; width:130%; height:44%; transform:translateX(-50%);
+  background:radial-gradient(ellipse at 50% 70%, rgba(255,255,255,.85), rgba(255,255,255,0) 66%); filter:blur(9px);
+  animation:puff 4s ease-in-out infinite; pointer-events:none}
+@keyframes puff{50%{transform:translateX(-50%) scale(1.12); opacity:.7}}
+
+/* CA */
+.ca{margin:0 0 clamp(14px,3vw,26px); background:var(--ink); color:var(--pad); border:3px solid var(--ink);
+  padding:11px 14px; font-size:clamp(9px,2.1vw,13px); letter-spacing:.1em; display:flex; gap:12px; align-items:center;
+  justify-content:space-between; cursor:pointer; overflow:hidden}
+.ca span{color:#6fae55; white-space:nowrap}
+.ca b{font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ca:hover{background:#0a2404}
+
+/* marquee */
+.mq{background:var(--ink); color:var(--pad); border-top:3px solid #0e3a06; border-bottom:3px solid #0e3a06;
+  overflow:hidden; white-space:nowrap; font-family:var(--disp); font-size:clamp(13px,2.6vw,20px); padding:9px 0; letter-spacing:.02em}
+.mq div{display:inline-block; animation:mq 26s linear infinite}
+.mq span{padding:0 22px}
+.mq i{color:var(--flame); font-style:normal}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* section frame */
+section.pad{padding:clamp(34px,7vw,86px) 0}
+.eyebrow{font-size:11px; letter-spacing:.32em; color:var(--pad); margin:0 0 8px}
+h2.h{font-family:var(--disp); font-size:clamp(24px,5.6vw,52px); line-height:.95; margin:0 0 22px; letter-spacing:-.02em;
+  color:var(--chrome); text-shadow:0 3px 0 #1f4a12}
+
+/* ---------- console (signature) ---------- */
+#console{background:linear-gradient(180deg,#07130a,#0b1c0e 40%,#07130a)}
+.cons{border:1px solid var(--line); background:var(--panel); box-shadow:inset 0 0 60px rgba(120,244,25,.06)}
+.cons-head{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:9px 14px;
+  border-bottom:1px solid var(--line); font-size:11px; letter-spacing:.2em; color:#8fe07a; flex-wrap:wrap}
+.cons-body{display:grid; grid-template-columns:1.35fr .95fr}
+#stage{display:block; width:100%; height:clamp(320px,58vh,560px); background:#000}
+.side{border-left:1px solid var(--line); display:flex; flex-direction:column}
+.gauges{display:grid; grid-template-columns:1fr 1fr; border-bottom:1px solid var(--line)}
+.g{padding:12px 14px; border-right:1px solid var(--line); border-bottom:1px solid var(--line)}
+.g:nth-child(2n){border-right:none}
+.g u{display:block; text-decoration:none; font-size:10px; letter-spacing:.24em; color:#5f8a56}
+.g b{display:block; font-family:var(--disp); font-size:clamp(18px,4vw,30px); color:var(--pad); letter-spacing:-.01em}
+.g.warn b{color:var(--flame)}
+.cigar{padding:12px 14px; border-bottom:1px solid var(--line)}
+.cigar u{display:block; text-decoration:none; font-size:10px; letter-spacing:.24em; color:#5f8a56; margin-bottom:8px}
+.cig-body{position:relative; height:20px; background:#1a1108; border:1px solid #3a2a14; overflow:hidden}
+.cig-body i{position:absolute; inset:0 auto 0 0; width:100%; background:linear-gradient(90deg,#e7dcc4 0 62%,#c9a262 62% 100%); transition:width .2s linear}
+.cig-body em{position:absolute; top:-3px; width:14px; height:26px; background:radial-gradient(circle,#ffdf7a,#ff6a12 55%,transparent 70%);
+  transform:translateX(-50%); filter:blur(1px); transition:left .2s linear}
+#log{flex:1; overflow:auto; padding:10px 14px; font-size:12px; line-height:1.5; color:#87b47c; min-height:120px}
+#log p{margin:0 0 6px}
+#log p b{color:var(--pad)}
+#log p.hit{color:var(--ember)}
+.cons-foot{display:flex; gap:10px; padding:12px 14px; border-top:1px solid var(--line); flex-wrap:wrap; align-items:center}
+.kbtn{font-family:var(--disp); font-size:12px; letter-spacing:.08em; padding:12px 20px; cursor:pointer;
+  background:var(--pad); color:var(--ink); border:none;
+  box-shadow:inset 2px 2px 0 #d3ff9c, inset -2px -2px 0 #2f7a06, 4px 4px 0 rgba(0,0,0,.6)}
+.kbtn:active{transform:translate(2px,2px); box-shadow:inset 2px 2px 0 #d3ff9c, inset -2px -2px 0 #2f7a06, 2px 2px 0 rgba(0,0,0,.6)}
+.kbtn.sec{background:#1d3a20; color:var(--pad); box-shadow:inset 2px 2px 0 #37653a, inset -2px -2px 0 #0b1c0e, 4px 4px 0 rgba(0,0,0,.6)}
+.kbtn[disabled]{opacity:.4; cursor:not-allowed}
+.best{margin-left:auto; font-size:11px; letter-spacing:.18em; color:#5f8a56}
+.best b{color:var(--ember)}
+
+/* ---------- lore ---------- */
+#lore{background:var(--panel); border-top:1px solid var(--line); border-bottom:1px solid var(--line)}
+.lore-grid{display:grid; grid-template-columns:1fr 1fr; gap:clamp(16px,4vw,44px)}
+.lore-grid p{color:#b9cdbb; line-height:1.72; font-size:clamp(13px,2.2vw,15px); margin:0 0 20px}
+.lore-grid p:first-letter{color:var(--pad); font-weight:700}
+.rules{border:1px solid var(--line); padding:clamp(14px,3vw,22px); background:#0a170c; align-self:start}
+.rules h3{font-family:var(--disp); font-size:13px; letter-spacing:.2em; color:var(--pad); margin:0 0 14px}
+.rules div{padding:10px 0; border-top:1px dashed rgba(120,244,25,.2); font-size:13px; color:#a9c2ab; line-height:1.6}
+.rules div b{color:var(--ember); font-weight:700}
+
+/* ---------- feed / tv ---------- */
+.tv{position:relative; border:14px solid #16211a; border-radius:14px; background:#000; overflow:hidden;
+  box-shadow:0 24px 0 -6px rgba(0,0,0,.6), inset 0 0 60px rgba(0,0,0,.9)}
+.tv .screen{position:relative; aspect-ratio:16/10; overflow:hidden; background:#04120a}
+.ch{position:absolute; inset:0; opacity:0; transition:opacity .25s}
+.ch.on{opacity:1}
+.ch1{background:radial-gradient(ellipse at 50% 90%, #a6ff5c, var(--pad) 45%, #2f8c06 100%)}
+.ch1 img{position:absolute; left:50%; bottom:-4%; height:104%; width:auto; max-width:none; transform:translateX(-50%);
+  animation:hover 4.4s ease-in-out infinite}
+.ch1 .flare{position:absolute; left:50%; bottom:0; width:70%; height:36%; transform:translateX(-50%);
+  background:radial-gradient(ellipse at 50% 100%, rgba(255,255,255,.95), rgba(255,180,40,.5) 45%, transparent 72%);
+  filter:blur(6px); animation:puff 2.6s ease-in-out infinite}
+.ch2{background:#01040a}
+.ch2 canvas{width:100%; height:100%; display:block}
+.tv .sl{position:absolute; inset:0; pointer-events:none;
+  background:repeating-linear-gradient(rgba(0,0,0,.34) 0 1px,transparent 1px 3px)}
+.tv .roll{position:absolute; left:0; right:0; height:30%; pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(255,255,255,.1),transparent); animation:roll 5.5s linear infinite}
+@keyframes roll{from{top:-40%}to{top:110%}}
+.tv .osd{position:absolute; top:10px; left:12px; font-size:11px; letter-spacing:.2em; color:#d6ffc0; text-shadow:0 0 6px #000; z-index:3}
+.tv .osd2{position:absolute; bottom:10px; left:12px; right:12px; display:flex; justify-content:space-between;
+  font-size:10px; letter-spacing:.18em; color:#d6ffc0; text-shadow:0 0 6px #000; z-index:3}
+.chbtn{margin-top:14px; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.feed-cap{color:#8fae8b; font-size:12px; line-height:1.6; margin:14px 0 0; max-width:62ch}
+
+/* ---------- manifest ---------- */
+.mf{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; perspective:1200px; perspective-origin:50% 40%}
+.mf button{cursor:pointer; text-align:left; font-family:var(--mono); color:#b9cdbb; background:#0a170c;
+  border:1px solid var(--line); padding:16px; transition:transform .22s, background .22s; display:block}
+.mf button:nth-child(3n+1){transform:rotateY(16deg) rotateX(-5deg) translateZ(-20px)}
+.mf button:nth-child(3n+2){transform:rotateY(-4deg) rotateX(6deg) translateZ(10px)}
+.mf button:nth-child(3n+3){transform:rotateY(-17deg) rotateX(-3deg) translateZ(-14px)}
+.mf button:hover{transform:rotateY(0) rotateX(0) translateZ(46px); background:#10240f}
+.mf .no{font-size:10px; letter-spacing:.26em; color:#5f8a56}
+.mf .nm{font-family:var(--disp); font-size:15px; color:var(--chrome); margin:6px 0 8px; line-height:1.15}
+.mf .st{font-size:11px; letter-spacing:.14em}
+.mf .st.ok{color:var(--pad)} .mf .st.bad{color:var(--flame)} .mf .st.mid{color:var(--ember)}
+.peek{display:flex; gap:10px; overflow:auto; margin-top:18px; padding-bottom:8px}
+.peek b{flex:0 0 auto; font-family:var(--mono); font-weight:400; font-size:11px; letter-spacing:.16em; color:#5f8a56;
+  border:1px dashed rgba(120,244,25,.25); padding:8px 12px}
+
+/* lightbox */
+#lb{position:fixed; inset:0; z-index:150; background:rgba(2,8,3,.94); display:none; align-items:center; justify-content:center; padding:20px}
+#lb.on{display:flex}
+#lb .card{max-width:560px; width:100%; border:1px solid var(--line); background:var(--panel); padding:clamp(18px,4vw,28px); position:relative}
+#lb svg{width:150px; height:150px; display:block; margin:0 auto 16px}
+#lb h4{font-family:var(--disp); font-size:20px; margin:0 0 4px; color:var(--chrome); text-align:center}
+#lb .meta{text-align:center; font-size:11px; letter-spacing:.2em; color:#5f8a56; margin-bottom:16px}
+#lb p{color:#b9cdbb; line-height:1.7; font-size:13px; margin:0}
+#lb .nav{display:flex; justify-content:space-between; margin-top:20px; gap:10px}
+#lb .nav button{flex:1; background:#12240f; color:var(--pad); border:1px solid var(--line); padding:11px; cursor:pointer;
+  font-family:var(--mono); font-size:12px; letter-spacing:.16em}
+#lb .nav button:hover{background:var(--pad); color:var(--ink)}
+#lb .x{position:absolute; top:-14px; right:-14px; width:34px; height:34px; border-radius:50%; background:var(--pad);
+  color:var(--ink); border:none; cursor:pointer; font-family:var(--disp); font-size:15px}
+
+/* footer */
+footer{border-top:1px solid var(--line); padding:34px 0 60px; background:var(--void)}
+.fx{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; align-items:center; font-size:11px; letter-spacing:.16em; color:#4f7449}
+.fmark{font-family:var(--disp); font-size:clamp(30px,8vw,74px); color:#0f2612; letter-spacing:-.03em; line-height:.9; margin:0 0 18px;
+  -webkit-text-stroke:1px #1d4a1c}
+
+/* mobile CA bar */
+.mobca{display:none}
+
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-char{order:-1; width:min(74%,330px)}
+  .mark{filter:drop-shadow(0 5px 0 #2c6a07) drop-shadow(0 9px 0 #1c4404)}
+  .hero-cta .btn{flex:1 1 100%; justify-content:center}
+  .cons-body{grid-template-columns:1fr}
+  .side{border-left:none; border-top:1px solid var(--line)}
+  .lore-grid{grid-template-columns:1fr}
+  .mf{grid-template-columns:1fr}
+  .mf button{transform:none!important}
+  .topbar .tl span.hide{display:none}
+  .mobca{display:flex; position:fixed; left:0; right:0; bottom:0; z-index:85; margin:0; border:none; border-top:3px solid #0e3a06}
+  footer{padding-bottom:80px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+
+<!-- ============ GATE ============ -->
+<div id="gate">
+  <div class="gsub">space p launch systems · pad 04</div>
+  <div class="gmark">HOLD FOR<br>IGNITION</div>
+  <div class="gkey">CLICK TO ENTER</div>
+</div>
+
+<!-- ============ BOOT ============ -->
+<div id="boot">
+  <div class="bh">SPACE P — PRE-FLIGHT CHECK</div>
+  <ul id="bootlist"></ul>
+  <div class="bar"><i id="bootbar"></i></div>
+  <button class="skip" id="skip">SKIP CHECKLIST ›</button>
+</div>
+
+<!-- ============ SITE ============ -->
+<div id="site">
+
+<div class="topbar"><div class="wrap">
+  <div class="tl">
+    <span class="rec"><i></i>PAD LIVE</span>
+    <span class="hide">MISSION 04 · SPACEP</span>
+    <span class="hide">WIND 3 KT</span>
+  </div>
+  <div class="clock" id="clk">T-00:00:00</div>
+</div></div>
+
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="tick">$SPACEP</div>
+        <h1 class="mark">SPACE&nbsp;P</h1>
+        <p class="slog">i am the letter p and i own a rocket program. nobody signed off on it, nobody asked for it, and the countdown is already running.</p>
+        <div class="hero-cta">
+          <a class="btn" href="https://pump.fun" target="_blank" rel="noopener">BUY $SPACEP</a>
+          <a class="btn dark" href="https://x.com" target="_blank" rel="noopener">X / TWITTER</a>
+          <a class="btn dark" href="https://dexscreener.com" target="_blank" rel="noopener">CHART</a>
+        </div>
+      </div>
+      <div class="hero-char">
+        <div class="smoke"></div>
+        <img src="assets/cut-spacep.webp" alt="space p standing on the pad with a rocket under one arm, thumb up, cigar lit, going nowhere but up">
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="mq"><div>
+  <span>IGNITION IS A MOOD <i>★</i></span><span>THE ROCKET IS UNDER MY ARM <i>★</i></span><span>ALTITUDE IS A PERSONALITY TRAIT <i>★</i></span><span>THE CIGAR IS THE FUEL GAUGE <i>★</i></span><span>THUMB UP MEANS GO <i>★</i></span><span>SPACE P LAUNCH SYSTEMS <i>★</i></span>
+  <span>IGNITION IS A MOOD <i>★</i></span><span>THE ROCKET IS UNDER MY ARM <i>★</i></span><span>ALTITUDE IS A PERSONALITY TRAIT <i>★</i></span><span>THE CIGAR IS THE FUEL GAUGE <i>★</i></span><span>THUMB UP MEANS GO <i>★</i></span><span>SPACE P LAUNCH SYSTEMS <i>★</i></span>
+</div></div>
+
+<div class="wrap" style="padding-top:clamp(20px,4vw,34px)">
+  <div class="ca"><span>CONTRACT</span><b class="ca-val">soon — click here on launch day</b><span>TAP TO COPY</span></div>
+</div>
+
+<!-- ============ CONSOLE ============ -->
+<section class="pad" id="console"><div class="wrap">
+  <p class="eyebrow">SIGNATURE SYSTEM · PAD 04</p>
+  <h2 class="h">THE LAUNCH CONSOLE</h2>
+  <div class="cons">
+    <div class="cons-head">
+      <span id="phase">STATUS — SITTING ON THE PAD, CIGAR LIT</span>
+      <span>PAD 04 · CH 01 · PAL</span>
+    </div>
+    <div class="cons-body">
+      <canvas id="stage"></canvas>
+      <div class="side">
+        <div class="gauges">
+          <div class="g"><u>ALTITUDE</u><b id="gAlt">0 km</b></div>
+          <div class="g"><u>VELOCITY</u><b id="gVel">0 m/s</b></div>
+          <div class="g"><u>THRUST</u><b id="gThr">IDLE</b></div>
+          <div class="g" id="gGw"><u>VIBES</u><b id="gVib">STABLE</b></div>
+        </div>
+        <div class="cigar">
+          <u>CIGAR / FUEL REMAINING</u>
+          <div class="cig-body"><i id="cigFill"></i><em id="cigEmber"></em></div>
+        </div>
+        <div id="log"><p><b>&gt;</b> console warm. the letter is on the pad, the rocket is under his arm, and nobody has asked him to put it down.</p></div>
+      </div>
+    </div>
+    <div class="cons-foot">
+      <button class="kbtn" id="btnGo">IGNITION</button>
+      <button class="kbtn sec" id="btnStage" disabled>STAGE SEP</button>
+      <button class="kbtn sec" id="btnReset">BACK TO PAD</button>
+      <span class="best">PERSONAL BEST <b id="best">0 km</b></span>
+    </div>
+  </div>
+</div></section>
+
+<!-- ============ LORE ============ -->
+<section class="pad" id="lore"><div class="wrap">
+  <p class="eyebrow">CLEARANCE — NONE REQUIRED</p>
+  <h2 class="h">WHO IS SPACE P</h2>
+  <div class="lore-grid">
+    <div>
+      <p>i was manufactured as a letter. one single letter, chrome finish, meant to sit quietly in a word and hold my shape for the rest of my life. somewhere between the factory and the alphabet i acquired a rocket, and once you are holding a rocket the word you were supposed to sit in stops feeling like a career.</p>
+      <p>i do not fly the rocket. i carry it. it fires the entire time, under my arm, at full thrust, and i keep my grip and my posture and my thumb up like a professional. people ask why i do not just get in it. getting in it would make me a passenger, and i have never in my life been a passenger.</p>
+      <p>the cigar is not a habit, it is instrumentation. as long as it is burning, the mission is funded and the engines have something to do. when it burns down i land, i buy another one, and the whole program starts again from the top with no paperwork and no lessons learned.</p>
+      <p>my shoes are rated for one gravity and i have taken them to considerably more than that. every mission ends the same way — smoke everywhere, chrome slightly warm, thumb still up, someone in the distance shouting a number that i do not intend to write down.</p>
+    </div>
+    <div class="rules">
+      <h3>FLIGHT RULES · PAD 04</h3>
+      <div><b>RULE 01</b> — the countdown starts when i say it starts, and it does not stop for weather, for permits, or for anyone standing at a comfortable distance with an opinion.</div>
+      <div><b>RULE 02</b> — the rocket stays under the arm. it has been offered a launch tower twice and it turned both of them down, which is exactly the attitude i look for in hardware.</div>
+      <div><b>RULE 03</b> — altitude is measured in whatever i feel like measuring it in that day. kilometres on a good morning, floors on a bad one, and once, memorably, in cigars.</div>
+      <div><b>RULE 04</b> — the thumb goes up before the smoke clears. it is a signal to the ground crew that i am fine, the vehicle is fine, and the number on the screen is somebody else's problem.</div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ============ FEED ============ -->
+<section class="pad"><div class="wrap">
+  <p class="eyebrow">DOWNLINK</p>
+  <h2 class="h">LAUNCH FEED</h2>
+  <div class="tv">
+    <div class="screen">
+      <div class="ch ch1 on" id="ch1">
+        <div class="flare"></div>
+        <img src="assets/cut-spacep.webp" alt="pad camera: space p holding position in the exhaust, entirely unbothered by it">
+      </div>
+      <div class="ch ch2" id="ch2"><canvas id="camcan"></canvas></div>
+      <div class="sl"></div><div class="roll"></div>
+      <div class="osd" id="osd">CH 01 · PAD CAM</div>
+      <div class="osd2"><span id="osdL">TRACKING — SUBJECT REFUSES TO PUT IT DOWN</span><span>REC ●</span></div>
+    </div>
+  </div>
+  <div class="chbtn">
+    <button class="kbtn" id="chBtn">CH +</button>
+    <button class="kbtn sec" id="sndBtn">SOUND: OFF</button>
+    <span class="best">VOL <input id="vol" type="range" min="0" max="100" value="55" style="vertical-align:middle;width:110px"></span>
+  </div>
+  <p class="feed-cap">two cameras cover pad 04. one of them points at the letter and one of them points at whatever the letter is currently leaving behind, and honestly the second one has better ratings.</p>
+</div></section>
+
+<!-- ============ MANIFEST ============ -->
+<section class="pad" style="background:var(--panel); border-top:1px solid var(--line)"><div class="wrap">
+  <p class="eyebrow">ARCHIVE · SIX FLIGHTS ON RECORD</p>
+  <h2 class="h">MISSION MANIFEST</h2>
+  <div class="mf" id="mf"></div>
+  <div class="peek">
+    <b>PATCH SEWN BY HAND</b><b>NO ABORT BUTTON INSTALLED</b><b>CIGAR RESUPPLY: WEEKLY</b><b>THUMB CALIBRATED</b><b>SHOES: ONE PAIR, SIX FLIGHTS</b><b>PAD 04 IS FINE</b>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="fmark">SPACE P</div>
+  <div class="ca" style="margin-bottom:20px"><span>CONTRACT</span><b class="ca-val">soon — click here on launch day</b><span>TAP TO COPY</span></div>
+  <div class="fx">
+    <span>PAD 04 · SPACE P LAUNCH SYSTEMS</span>
+    <span>THUMB UP · SMOKE OUT · $SPACEP</span>
+  </div>
+</div></footer>
+
+<div class="ca mobca"><span>CA</span><b class="ca-val">soon</b><span>TAP</span></div>
+</div>
+
+<!-- lightbox -->
+<div id="lb"><div class="card">
+  <button class="x" id="lbx">✕</button>
+  <div id="lbsvg"></div>
+  <h4 id="lbt"></h4>
+  <div class="meta" id="lbm"></div>
+  <p id="lbp"></p>
+  <div class="nav"><button id="lbprev">‹ PREV</button><button id="lbnext">NEXT ›</button></div>
+</div></div>
+
+<div class="film scanlines"></div>
+<div class="film grain"></div>
+<div class="film vignette"></div>
+
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)}, $$=function(s){return [].slice.call(document.querySelectorAll(s))};
+
+/* ---------- sound ---------- */
+var actx=null, muted=true, vol=.55;
+function blip(f,t){ if(muted) return;
+  try{ if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    var o=actx.createOscillator(), g=actx.createGain();
+    o.type=t||'square'; o.frequency.value=f||220; g.gain.value=0.05*vol;
+    o.connect(g); g.connect(actx.destination); o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, actx.currentTime+0.1);
+    o.stop(actx.currentTime+0.12);
+  }catch(e){}
+}
+
+/* ---------- gate + boot ---------- */
+var CHECKS=[
+ ["cigar lit and drawing evenly","GO"],["thumb servo at full extension","GO"],
+ ["rocket still under the arm","GO"],["shoes laced, rated for one gravity","GO"],
+ ["ground crew asked to step back","IGNORED"],["flight plan","NOT FILED"],
+ ["pad 04 cleared by pad 04","GO"]
+];
+function boot(){
+  document.body.classList.add('entered','booting');
+  var ul=$('#bootlist'), bar=$('#bootbar'), i=0, done=false;
+  CHECKS.forEach(function(c){ var li=document.createElement('li'); li.innerHTML='<span>'+c[0]+'</span><b>····</b>'; ul.appendChild(li); });
+  var lis=$$('#boot li');
+  var iv=setInterval(function(){
+    if(i>=CHECKS.length){ clearInterval(iv); setTimeout(go,420); return; }
+    lis[i].classList.add('ok'); lis[i].querySelector('b').textContent=CHECKS[i][1];
+    blip(360+i*40); i++; bar.style.width=(i/CHECKS.length*100)+'%';
+  },260);
+  function go(){ if(done) return; done=true; clearInterval(iv);
+    document.body.classList.remove('booting'); document.body.classList.add('live'); start(); }
+  $('#skip').addEventListener('click',function(e){ e.stopPropagation(); go(); });
+  setTimeout(go, 4200); /* safety */
+}
+$('#gate').addEventListener('click', boot);
+
+/* ---------- clock ---------- */
+var t0=Date.now();
+setInterval(function(){
+  var s=Math.floor((Date.now()-t0)/1000);
+  var h=('0'+Math.floor(s/3600)).slice(-2), m=('0'+Math.floor(s/60)%60).slice(-2), q=('0'+s%60).slice(-2);
+  var el=$('#clk'); if(el) el.textContent='T+'+h+':'+m+':'+q;
+},1000);
+
+/* ---------- launch console ---------- */
+var cv=$('#stage'), ctx=cv.getContext('2d'), W=0,H=0,dpr=1;
+function size(){ dpr=Math.min(window.devicePixelRatio||1,1.6);
+  W=cv.clientWidth; H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+window.addEventListener('resize', function(){ size(); camSize(); });
+
+var S={mode:'pad', alt:0, vel:0, fuel:100, t:0, cd:0, staged:false, best:+(localStorage.getItem('spacep_best')||0)};
+var stars=[], puffs=[], hero=new Image(); hero.src='assets/cut-spacep.webp';
+for(var i=0;i<160;i++) stars.push({x:Math.random(), y:Math.random(), r:Math.random()*1.4+.3, s:Math.random()});
+
+var MILES=[
+ [1,   "cleared the fence. the ground crew is now a rumour."],
+ [8,   "passed the birds. one of them made eye contact and i did not blink first."],
+ [18,  "cigar still drawing. the engines are getting most of it but there is enough for both of us."],
+ [42,  "the sky went out. nobody warned me it does that, i just kept going and it kept getting darker."],
+ [80,  "thumb still up. i am doing it for an audience that stopped being visible some time ago."],
+ [140, "the chart guys are calling this a candle. i am calling it a tuesday, and i intend to keep the difference."],
+ [230, "somewhere below, a very expensive meeting is being interrupted about me."],
+ [360, "i can see the whole pad from here and it is the size of a coin. that feels correct."]
+];
+var hit=[];
+function log(msg,isHit){ var d=$('#log'), p=document.createElement('p');
+  p.innerHTML='<b>&gt;</b> '+msg; if(isHit) p.className='hit'; d.appendChild(p); d.scrollTop=d.scrollHeight;
+  while(d.children.length>40) d.removeChild(d.firstChild); }
+
+function fmt(n){ return n>=100? Math.round(n) : n.toFixed(1); }
+
+function setPhase(txt){ $('#phase').textContent='STATUS — '+txt; }
+
+function ignite(){
+  if(S.mode!=='pad') return;
+  S.mode='count'; S.cd=6; setPhase('COUNTDOWN. NOBODY MOVE.');
+  $('#btnGo').disabled=true;
+  log('countdown started. i did not ask anyone and nobody arrived to stop me.');
+  var iv=setInterval(function(){
+    S.cd--; blip(200+ (6-S.cd)*60);
+    if(S.cd>0){ setPhase('T-MINUS '+S.cd); }
+    else{ clearInterval(iv); liftoff(); }
+  },700);
+}
+function liftoff(){
+  S.mode='fly'; S.vel=40; setPhase('LIFTOFF — HOLDING THE ROCKET, NOT RIDING IT');
+  $('#btnStage').disabled=false; blip(90,'sawtooth');
+  log('liftoff. the smoke arrived first and i walked out of it upward.');
+}
+function stageSep(){
+  if(S.mode!=='fly'||S.staged) return;
+  S.staged=true; S.vel*=1.55; $('#btnStage').disabled=true; blip(140,'sawtooth');
+  log('stage separation. something heavy fell off and i have decided it was not important.',true);
+  for(var i=0;i<18;i++) puffs.push({x:.5+(Math.random()-.5)*.1, y:.72, r:6+Math.random()*16, a:.8, vy:.004+Math.random()*.006, vx:(Math.random()-.5)*.006});
+}
+function reset(){
+  S.mode='pad'; S.alt=0; S.vel=0; S.fuel=100; S.staged=false; hit=[]; puffs=[];
+  $('#btnGo').disabled=false; $('#btnStage').disabled=true;
+  setPhase('SITTING ON THE PAD, CIGAR LIT');
+  log('back on the pad. new cigar, same rocket, same arm.');
+}
+$('#btnGo').addEventListener('click', ignite);
+$('#btnStage').addEventListener('click', stageSep);
+$('#btnReset').addEventListener('click', reset);
+$('#best').textContent=fmt(S.best)+' km';
+
+var last=performance.now();
+function step(now){
+  var dt=Math.min((now-last)/1000,.05); last=now;
+  if(!document.hidden){ update(dt); draw(); }
+  requestAnimationFrame(step);
+}
+function update(dt){
+  S.t+=dt;
+  if(S.mode==='fly'){
+    if(S.fuel>0){ S.fuel=Math.max(0,S.fuel-dt*5.2); S.vel+=dt*(S.staged?46:32); }
+    else { S.vel-=dt*9.6; if(S.vel<=0){ S.vel=0; apogee(); } }
+    S.alt+=S.vel*dt*.06;
+    MILES.forEach(function(m,i){ if(!hit[i] && S.alt>=m[0]){ hit[i]=1; log(m[1],true); blip(520+i*30,'triangle'); } });
+    if(Math.random()<.5) puffs.push({x:.5+(Math.random()-.5)*.06, y:.78, r:4+Math.random()*12, a:.65, vy:.006+Math.random()*.008, vx:(Math.random()-.5)*.004});
+  }
+  puffs.forEach(function(p){ p.y+=p.vy; p.x+=p.vx; p.r+=.35; p.a-=.008; });
+  puffs=puffs.filter(function(p){ return p.a>0 && p.y<1.3; });
+  /* hud */
+  $('#gAlt').textContent=fmt(S.alt)+' km';
+  $('#gVel').textContent=Math.round(S.vel)+' m/s';
+  $('#gThr').textContent = S.mode==='fly' ? (S.fuel>0?(S.staged?'FULL ×2':'FULL'):'COASTING') : (S.mode==='count'?'ARMED':'IDLE');
+  var vib = S.mode!=='fly' ? 'STABLE' : (S.vel>320?'UNREASONABLE':(S.vel>160?'ELEVATED':'CONFIDENT'));
+  $('#gVib').textContent=vib; $('#gGw').classList.toggle('warn', S.vel>320);
+  $('#cigFill').style.width=S.fuel+'%';
+  $('#cigEmber').style.left=S.fuel+'%';
+  $('#cigEmber').style.opacity = S.fuel>0?1:0;
+}
+function apogee(){
+  S.mode='apogee'; setPhase('APOGEE — THUMB UP, SMOKE OUT');
+  var b=S.alt; if(b>S.best){ S.best=b; localStorage.setItem('spacep_best', String(b));
+    $('#best').textContent=fmt(b)+' km'; log('personal best. i will not be putting this on a chart, but i will be mentioning it constantly.',true); }
+  else log('apogee at '+fmt(S.alt)+' km. cigar out, hands still full, absolutely no complaints.');
+  blip(330,'triangle');
+}
+function draw(){
+  if(!W) size();
+  var a=S.alt, sky=Math.min(1,Math.pow(a/42,.8));
+  var g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, mix([26,80,10],[0,1,4],Math.min(1,sky*1.5)));
+  g.addColorStop(.5, mix([120,244,25],[1,4,12],sky));
+  g.addColorStop(1, mix([180,255,110],[6,26,10],sky));
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  /* stars */
+  if(sky>.15){ ctx.globalAlpha=(sky-.15)/.85;
+    stars.forEach(function(s){
+      var y=((s.y + a*.0016) % 1)*H;
+      ctx.fillStyle='rgba(255,255,255,'+(.35+s.s*.65)+')';
+      ctx.fillRect(s.x*W, H-y, s.r, s.r);
+    }); ctx.globalAlpha=1; }
+  /* ground */
+  var gy = H*.86 + Math.min(a,26)*(H*.5/26);
+  if(gy<H+40){
+    ctx.fillStyle='#2c7a06'; ctx.fillRect(0,gy,W,H-gy+40);
+    ctx.fillStyle='rgba(0,0,0,.25)';
+    for(var i=0;i<10;i++) ctx.fillRect(i*W/10, gy, W/20, 5);
+    ctx.fillStyle='#0a1c05';
+    ctx.fillRect(W*.16, gy-Math.max(0,26-a)*1.2-14, 8, Math.max(0,26-a)*1.2+14);
+    ctx.fillRect(W*.80, gy-Math.max(0,26-a)*1.0-10, 6, Math.max(0,26-a)*1.0+10);
+  }
+  /* puffs */
+  puffs.forEach(function(p){
+    ctx.globalAlpha=Math.max(0,p.a);
+    ctx.fillStyle= p.y>.8?'rgba(240,240,225,1)':'rgba(220,225,210,1)';
+    ctx.beginPath(); ctx.arc(p.x*W, p.y*H, p.r, 0, 6.29); ctx.fill();
+  }); ctx.globalAlpha=1;
+  /* vehicle */
+  var shake = S.mode==='fly' ? (S.fuel>0?1:.25) : 0;
+  var cx=W*.5 + Math.sin(S.t*31)*2.4*shake, cy=H*.56 + (S.mode==='fly'? Math.sin(S.t*22)*2.4*shake : Math.sin(S.t*2)*2.4);
+  var hh=Math.min(H*.62, W*.5);
+  /* exhaust column under the vehicle */
+  if(S.mode==='fly'&&S.fuel>0){
+    var fl=hh*(.30+Math.sin(S.t*36)*.07)+(S.staged?hh*.18:0), fy=cy+hh*.46;
+    var fg=ctx.createLinearGradient(0,fy,0,fy+fl);
+    fg.addColorStop(0,'rgba(255,246,214,.95)'); fg.addColorStop(.28,'rgba(255,176,43,.85)'); fg.addColorStop(.7,'rgba(255,106,18,.45)'); fg.addColorStop(1,'rgba(255,60,0,0)');
+    ctx.fillStyle=fg; ctx.beginPath();
+    ctx.moveTo(cx-hh*.085, fy); ctx.lineTo(cx+hh*.085, fy); ctx.lineTo(cx, fy+fl); ctx.closePath(); ctx.fill();
+  }
+  if(hero.complete && hero.naturalWidth){
+    var hw=hh*(hero.naturalWidth/hero.naturalHeight);
+    ctx.save();
+    if(S.mode==='fly'){ ctx.shadowColor='rgba(255,170,40,.75)'; ctx.shadowBlur=34; }
+    ctx.drawImage(hero, cx-hw/2, cy-hh*.5, hw, hh);
+    ctx.restore();
+  } else {
+    var sc=Math.min(W,H)/300;
+    ctx.save(); ctx.translate(cx,cy); ctx.scale(sc,sc);
+    var cg=ctx.createLinearGradient(-26,-40,26,40);
+    cg.addColorStop(0,'#ffffff'); cg.addColorStop(.5,'#c9d6da'); cg.addColorStop(1,'#7f9096');
+    ctx.fillStyle=cg; ctx.strokeStyle='#0a1a10'; ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.roundRect(-11,-42,15,76,4); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.roundRect(-11,-42,40,40,12); ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+  /* hud lines */
+  ctx.strokeStyle='rgba(120,244,25,.22)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(0,H*.5); ctx.lineTo(W,H*.5); ctx.stroke();
+  ctx.font='10px "Space Mono", monospace'; ctx.fillStyle='rgba(190,255,150,.75)';
+  ctx.fillText('PAD 04 / TRACKING', 12, 20);
+  ctx.fillText('ALT '+fmt(S.alt)+' KM', 12, H-14);
+}
+function mix(a,b,t){ t=Math.max(0,Math.min(1,t));
+  return 'rgb('+Math.round(a[0]+(b[0]-a[0])*t)+','+Math.round(a[1]+(b[1]-a[1])*t)+','+Math.round(a[2]+(b[2]-a[2])*t)+')'; }
+
+/* ---------- onboard cam (CH 02) ---------- */
+var cc=$('#camcan'), cx2=cc.getContext('2d'), CW=0,CH2=0, cstars=[];
+for(var j=0;j<120;j++) cstars.push({x:Math.random(),y:Math.random(),s:Math.random()*2+.4});
+function camSize(){ CW=cc.clientWidth||320; CH2=cc.clientHeight||200; cc.width=CW; cc.height=CH2; }
+function camDraw(){
+  if(!CW) camSize();
+  cx2.fillStyle='#01040a'; cx2.fillRect(0,0,CW,CH2);
+  cstars.forEach(function(s){ s.y+=0.0022+s.s*0.0016; if(s.y>1) s.y=0;
+    cx2.fillStyle='rgba(200,255,190,'+(.3+s.s*.3)+')'; cx2.fillRect(s.x*CW, s.y*CH2, s.s, s.s*3); });
+  /* earth curve */
+  cx2.fillStyle='#0d3d10'; cx2.beginPath(); cx2.ellipse(CW*.5, CH2*1.42, CW*.95, CH2*.62, 0,0,6.29); cx2.fill();
+  cx2.strokeStyle='rgba(120,244,25,.55)'; cx2.lineWidth=2; cx2.stroke();
+  /* nozzle glow */
+  var t=performance.now()/1000;
+  var gg=cx2.createRadialGradient(CW*.5,CH2*.9,2,CW*.5,CH2*.9,CH2*.5);
+  gg.addColorStop(0,'rgba(255,240,190,'+(.7+Math.sin(t*12)*.2)+')'); gg.addColorStop(1,'rgba(255,120,20,0)');
+  cx2.fillStyle=gg; cx2.beginPath(); cx2.arc(CW*.5,CH2*.9,CH2*.5,0,6.29); cx2.fill();
+  cx2.strokeStyle='rgba(120,244,25,.3)';
+  cx2.beginPath(); cx2.moveTo(CW*.5-16,CH2*.5); cx2.lineTo(CW*.5+16,CH2*.5); cx2.moveTo(CW*.5,CH2*.5-16); cx2.lineTo(CW*.5,CH2*.5+16); cx2.stroke();
+  requestAnimationFrame(camDraw);
+}
+
+/* channel switch */
+var ch=1;
+$('#chBtn').addEventListener('click', function(){
+  ch = ch===1?2:1; blip(700,'square');
+  $('#ch1').classList.toggle('on', ch===1); $('#ch2').classList.toggle('on', ch===2);
+  $('#osd').textContent = ch===1?'CH 01 · PAD CAM':'CH 02 · ONBOARD CAM';
+  $('#osdL').textContent = ch===1?'TRACKING — SUBJECT REFUSES TO PUT IT DOWN':'LOOKING DOWN AT EVERYTHING THAT SAID NO';
+});
+$('#sndBtn').addEventListener('click', function(){ muted=!muted; this.textContent='SOUND: '+(muted?'OFF':'ON'); if(!muted) blip(440); });
+$('#vol').addEventListener('input', function(){ vol=this.value/100; });
+
+/* ---------- manifest + lightbox ---------- */
+var MISSIONS=[
+ {no:'M-01', nm:'FIRST SMOKE', st:['PAD ABORT','bad'], date:'DAY 001',
+  txt:'the first attempt never left the ground, because i had the rocket, the cigar and the thumb all in play at once and it turns out you cannot hold three things when you only have two hands. i stood in my own smoke for eleven minutes and told the crew it was a hold, not a failure.',
+  sh:'circle', ic:'flame', c:'#ff6a12'},
+ {no:'M-02', nm:'THE FENCE', st:['SUCCESS','ok'], date:'DAY 014',
+  txt:'cleared the perimeter fence by a margin that i have described publicly as comfortable and privately as approximately one shoe. the ground crew applauded, which i took as agreement rather than relief, and i have not revisited the footage since.',
+  sh:'shield', ic:'rocket', c:'#78f419'},
+ {no:'M-03', nm:'CIGAR ENDURANCE', st:['DATA ONLY','mid'], date:'DAY 031',
+  txt:'a full mission flown purely to find out how long one cigar lasts under continuous thrust. the answer is longer than the fuel, shorter than the argument that followed, and exactly long enough that i refuse to fly without one now.',
+  sh:'hex', ic:'cigar', c:'#d09242'},
+ {no:'M-04', nm:'DARK SKY', st:['SUCCESS','ok'], date:'DAY 058',
+  txt:'the first flight where the green went out of the sky entirely and everything above me turned into somebody else\'s department. i kept the thumb up the whole way because i could not think of a single better thing to do with it up there.',
+  sh:'circle', ic:'star', c:'#eef3f4'},
+ {no:'M-05', nm:'THE MEETING', st:['DISPUTED','mid'], date:'DAY 072',
+  txt:'launched during a scheduled review of whether launching should be allowed. the review concluded that it should not, some minutes after it already had, and the minutes of that meeting are now the most decorative document in the building.',
+  sh:'shield', ic:'p', c:'#ffb02b'},
+ {no:'M-06', nm:'PAD 04 RECORD', st:['SUCCESS','ok'], date:'DAY 099',
+  txt:'the highest one so far, and i have no intention of telling anyone the number because the number is the only part of the mission that other people are able to argue with. the smoke, the shoes and the thumb are beyond dispute.',
+  sh:'hex', ic:'thumb', c:'#78f419'}
+];
+function patch(m){
+  var shape = m.sh==='circle' ? '<circle cx="60" cy="60" r="52" fill="#0a170c" stroke="'+m.c+'" stroke-width="4"/>'
+    : m.sh==='hex' ? '<polygon points="60,6 108,33 108,87 60,114 12,87 12,33" fill="#0a170c" stroke="'+m.c+'" stroke-width="4"/>'
+    : '<path d="M60 6 L110 24 V66 C110 92 88 108 60 116 C32 108 10 92 10 66 V24 Z" fill="#0a170c" stroke="'+m.c+'" stroke-width="4"/>';
+  var ic = {
+    flame:'<path d="M60 34 C72 50 82 58 82 72 A22 22 0 0 1 38 72 C38 58 48 50 60 34Z" fill="'+m.c+'"/>',
+    rocket:'<path d="M60 26 C70 40 74 56 74 70 L60 82 L46 70 C46 56 50 40 60 26Z" fill="'+m.c+'"/><path d="M46 66 L36 84 L50 78Z M74 66 L84 84 L70 78Z" fill="'+m.c+'" opacity=".7"/>',
+    cigar:'<rect x="30" y="56" width="52" height="12" rx="6" fill="#e7dcc4"/><rect x="70" y="56" width="14" height="12" rx="6" fill="'+m.c+'"/><circle cx="86" cy="62" r="5" fill="#ff6a12"/>',
+    star:'<polygon points="60,30 68,54 92,54 72,68 80,92 60,78 40,92 48,68 28,54 52,54" fill="'+m.c+'"/>',
+    p:'<text x="60" y="82" font-family="Archivo Black, sans-serif" font-size="56" text-anchor="middle" fill="'+m.c+'">P</text>',
+    thumb:'<path d="M46 84 V58 H56 L64 34 C72 34 74 42 70 54 H86 C92 54 94 62 88 66 C92 70 90 76 84 78 C86 84 82 88 76 88 H52 Z" fill="'+m.c+'"/>'
+  }[m.ic];
+  return '<svg viewBox="0 0 120 120">'+shape+ic+'<circle cx="60" cy="60" r="56" fill="none" stroke="'+m.c+'" stroke-width="1" opacity=".35"/></svg>';
+}
+var mf=$('#mf');
+MISSIONS.forEach(function(m,i){
+  var b=document.createElement('button');
+  b.innerHTML='<div class="no">'+m.no+' · '+m.date+'</div><div class="nm">'+m.nm+'</div><div class="st '+m.st[1]+'">'+m.st[0]+'</div>';
+  b.addEventListener('click', function(){ open(i); });
+  mf.appendChild(b);
+});
+var at=0;
+function open(i){ at=(i+MISSIONS.length)%MISSIONS.length; var m=MISSIONS[at];
+  $('#lbsvg').innerHTML=patch(m); $('#lbt').textContent=m.nm;
+  $('#lbm').textContent=m.no+' · '+m.date+' · '+m.st[0]; $('#lbp').textContent=m.txt;
+  $('#lb').classList.add('on'); blip(560); }
+function close(){ $('#lb').classList.remove('on'); }
+$('#lbx').addEventListener('click', close);
+$('#lb').addEventListener('click', function(e){ if(e.target===this) close(); });
+$('#lbprev').addEventListener('click', function(){ open(at-1); });
+$('#lbnext').addEventListener('click', function(){ open(at+1); });
+document.addEventListener('keydown', function(e){
+  if(!$('#lb').classList.contains('on')) return;
+  if(e.key==='Escape') close(); if(e.key==='ArrowLeft') open(at-1); if(e.key==='ArrowRight') open(at+1);
+});
+
+/* ---------- start ---------- */
+function start(){ size(); camSize(); requestAnimationFrame(step); requestAnimationFrame(camDraw); }
+})();
+</script>
